@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/Dharanish-AM/code-tracer-cli.git"
   },
+  "bin": {
+    "code-tracer": "./index.js"
+  },
   "keywords": [
     "code-analysis",
     "cli-tool",
