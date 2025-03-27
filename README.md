@@ -1,7 +1,7 @@
 
-# 🛠️ Code Trace CLI – The Ultimate Code Analysis Tool 🚀
+# 🛠️ Code Tracerr CLI – The Ultimate Code Analysis Tool 🚀
 
-Code Trace CLI is a powerful command-line tool that provides a deep analysis of your JavaScript/TypeScript codebase.
+Code Tracer CLI is a powerful command-line tool that provides a deep analysis of your JavaScript/TypeScript codebase.
 It helps you identify bottlenecks, optimize performance, and improve maintainability with an instant report! 📊
 
 
@@ -17,15 +17,15 @@ It helps you identify bottlenecks, optimize performance, and improve maintainabi
 
 ## Installation
 
-Install Code Trace CLI globally using npm:
+Install Code Tracerr CLI globally using npm:
 
 ```bash
-  npm install -g code-trace-cli
+  npm install -g code-tracer-cli
 ```
 Or use it locally in your project:
 
 ```bash
-  npm install --save-dev code-trace-cli
+  npm install --save-dev code-tracer-cli
 ```
 
 
@@ -35,13 +35,13 @@ Or use it locally in your project:
 Analyze your project with a single command:
 
 ```bash
-code-trace analyze ./src
+code-tracer analyze ./src
 ```
 
 
 ## Appendix
 
-Why Use Code Trace?
+Why Use Code Tracer?
 
  - 🔹 Helps maintain clean and efficient code 🛠
  - 🔹 Avoids performance bottlenecks 🏎
