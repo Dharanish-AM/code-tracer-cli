@@ -1,0 +1,36 @@
+{
+  "name": "code-tracer-cli",
+  "version": "1.0.1",
+  "description": "A powerful CLI tool for analyzing code structure, detecting large functions, finding circular dependencies, and optimizing JavaScript/TypeScript projects.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DharanishAM/code-tracer-cli.git"
+  },
+  "keywords": [
+    "code-analysis",
+    "cli-tool",
+    "dependency-checker",
+    "performance-optimization",
+    "javascript",
+    "typescript",
+    "code-structure"
+  ],
+  "author": "Dharanish A M",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DharanishAM/code-tracer-cli/issues"
+  },
+  "homepage": "https://github.com/DharanishAM/code-tracer-cli#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^13.1.0",
+    "glob": "^11.0.1",
+    "madge": "^8.0.0"
+  }
+}
