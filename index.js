@@ -19,7 +19,11 @@ console.log(chalk.blue(`📊 Scanning project: ${projectDir}\n`));
 /**
  * Recursively generate a directory tree structure
  */
-function getProjectStructure(dir, ignoredDirs = [".git", "node_modules", "dist"], prefix = "") {
+function getProjectStructure(
+  dir,
+  ignoredDirs = [".git", "node_modules", "dist"],
+  prefix = ""
+) {
   let structure = "";
   const files = fs.readdirSync(dir);
 
@@ -31,7 +35,11 @@ function getProjectStructure(dir, ignoredDirs = [".git", "node_modules", "dist"]
     if (fs.statSync(fullPath).isDirectory()) {
       if (!ignoredDirs.includes(file)) {
         structure += `${prefix}${prefixBranch}📂 ${file}/\n`;
-        structure += getProjectStructure(fullPath, ignoredDirs, prefix + (isLast ? "    " : "│   "));
+        structure += getProjectStructure(
+          fullPath,
+          ignoredDirs,
+          prefix + (isLast ? "    " : "│   ")
+        );
       }
     } else {
       structure += `${prefix}${prefixBranch}📄 ${file}\n`;
@@ -48,7 +56,7 @@ function getAllFiles(dir, ignoredDirs = [".git", "node_modules", "dist"]) {
   let results = [];
   const files = fs.readdirSync(dir);
 
-  files.forEach(file => {
+  files.forEach((file) => {
     let fullPath = path.join(dir, file);
     if (fs.statSync(fullPath).isDirectory()) {
       if (!ignoredDirs.includes(file)) {
@@ -60,6 +68,18 @@ function getAllFiles(dir, ignoredDirs = [".git", "node_modules", "dist"]) {
   });
 
   return results;
+}
+
+/**
+ * Count lines in a file
+ */
+function countLines(file) {
+  try {
+    let content = fs.readFileSync(file, "utf-8");
+    return content.split("\n").length;
+  } catch (error) {
+    return 0;
+  }
 }
 
 /**
@@ -112,12 +132,41 @@ function analyzeFiles(files) {
       traverseAst(ast, file);
     } catch (error) {
       console.warn(
-        chalk.yellow(`⚠ Skipping file due to parsing error: ${file}\n  Reason: ${error.message}`)
+        chalk.yellow(
+          `⚠ Skipping file due to parsing error: ${file}\n  Reason: ${error.message}`
+        )
       );
     }
   }
 
   return { functionSizes, imports };
+}
+
+/**
+ * Detect Unused Files
+ */
+async function detectUnusedFiles() {
+  try {
+    const result = await madge(projectDir, { fileExtensions: ["js", "ts"] });
+    const dependencies = result.obj();
+    const allFiles = getAllFiles(projectDir);
+
+    const importedFiles = new Set(
+      Object.keys(dependencies).map((file) => path.resolve(projectDir, file))
+    );
+    const unusedFiles = allFiles.filter((file) => !importedFiles.has(file));
+
+    if (unusedFiles.length) {
+      console.log(chalk.red("\n🗑 Unused Files Detected:"));
+      unusedFiles.forEach((file) => console.log(`  ❌ ${chalk.white(file)}`));
+    } else {
+      console.log(chalk.green("\n✔ No unused files found 🎉"));
+    }
+    return unusedFiles;
+  } catch (error) {
+    console.error(chalk.red("❌ Error detecting unused files:"), error);
+    return [];
+  }
 }
 
 /**
@@ -130,7 +179,7 @@ async function checkCircularDependencies() {
 
     if (circularDeps.length) {
       console.log(chalk.red("\n🔄 Circular Dependencies:"));
-      circularDeps.forEach(dep => console.log(`  - ${dep.join(" → ")}`));
+      circularDeps.forEach((dep) => console.log(`  - ${dep.join(" → ")}`));
     } else {
       console.log(chalk.green("\n✔ No Circular Dependencies Found"));
     }
@@ -143,43 +192,112 @@ async function checkCircularDependencies() {
 }
 
 /**
+ * Provide Optimization Suggestions
+ */
+function provideOptimizationSuggestions(functionSizes, unusedFiles) {
+  console.log(chalk.bold.bgYellow("\n💡 OPTIMIZATION SUGGESTIONS:"));
+
+  if (functionSizes.length) {
+    console.log(
+      chalk.yellow(
+        "🔹 Consider refactoring large functions for better readability and maintainability."
+      )
+    );
+  }
+
+  if (unusedFiles.length) {
+    console.log(
+      chalk.yellow(
+        "🗑 Consider removing or refactoring unused files to clean up the project."
+      )
+    );
+  }
+
+  console.log(
+    chalk.yellow("📦 Optimize commonly used imports to reduce bundle size.")
+  );
+}
+
+/**
  * 🎯 Display Overview
  */
 async function displayOverview() {
   try {
     let files = getAllFiles(projectDir);
 
+    console.log(chalk.green.bold("\n✔ Analysis Completed 🎉\n"));
+
     console.log(chalk.bold.bgBlue("\n📂 PROJECT BREAKDOWN:"));
     console.log(chalk.yellow(getProjectStructure(projectDir)));
 
-    console.log(chalk.bold.bgMagenta(`\n📊 FOUND: ${chalk.white.bold(files.length)} JavaScript/TypeScript files`));
+    console.log(
+      chalk.bold.bgMagenta(
+        `\n📊 FOUND: ${chalk.white.bold(
+          files.length
+        )} JavaScript/TypeScript files`
+      )
+    );
+
+    console.log(chalk.bold.bgBlue("\n📂 FILE OVERVIEW:"));
+
+    files.forEach((file, index) => {
+      let fileSize = fs.statSync(file).size;
+      let functionCount = analyzeFiles([file]).functionSizes.length;
+      let lineCount = countLines(file);
+
+      console.log(
+        chalk.cyan(
+          `  ${index + 1}. ${chalk.white.bold(
+            path.relative(projectDir, file)
+          )} - 📄 ${functionCount} functions, ${fileSize} bytes, ${lineCount} lines`
+        )
+      );
+    });
 
     let { functionSizes, imports } = analyzeFiles(files);
 
     console.log(chalk.bold.bgRed("\n🚀 LARGE FUNCTIONS DETECTED:"));
-    let largeFunctions = functionSizes.filter(fn => fn.size > 50);
+    let largeFunctions = functionSizes.filter((fn) => fn.size > 50);
     if (largeFunctions.length) {
       largeFunctions.forEach(({ name, size, file }) =>
-        console.log(chalk.redBright.bold(`  ⚠ ${chalk.white.bold(name)} (${chalk.yellow.bold(size)} lines) in ${chalk.cyan(file)}`))
+        console.log(
+          chalk.redBright.bold(
+            `  ⚠ ${chalk.white.bold(name || "[Anonymous Function]")} (${chalk.yellow.bold(
+              size
+            )} lines) in ${chalk.cyan(file)}`
+          )
+        )
       );
     } else {
       console.log(chalk.green.bold("  ✔ No large functions found 🎉"));
     }
 
     console.log(chalk.bold.bgGreen("\n📦 MOST USED IMPORTS:"));
-    let sortedImports = Object.entries(imports).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    let sortedImports = Object.entries(imports)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
     if (sortedImports.length) {
       sortedImports.forEach(([module, count]) =>
-        console.log(chalk.cyan.bold(`  🔹 ${chalk.white.bold(module)}: ${chalk.yellowBright.bold(count)} times`))
+        console.log(
+          chalk.cyan.bold(
+            `  🔹 ${chalk.white.bold(module)}: ${chalk.yellowBright.bold(
+              count
+            )} times`
+          )
+        )
       );
     } else {
       console.log(chalk.green.bold("  ✔ No significant imports found 🏆"));
-    } 
+    }
 
     await checkCircularDependencies();
+    const unusedFiles = await detectUnusedFiles();
+    provideOptimizationSuggestions(largeFunctions, unusedFiles);
   } catch (error) {
     console.error(
-      chalk.bold.bgRed.white("❌ ERROR: An error occurred during the analysis!"), 
+      chalk.bold.bgRed.white(
+        "❌ ERROR: An error occurred during the analysis!"
+      ),
       chalk.red(error)
     );
   }

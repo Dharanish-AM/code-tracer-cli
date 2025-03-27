@@ -34,8 +34,12 @@
     "acorn": "^8.14.1",
     "chalk": "^4.1.2",
     "commander": "^13.1.0",
+    "deep-check": "^1.1.0",
+    "depcheck": "^1.4.7",
+    "escomplex": "^2.0.0-alpha",
     "fs": "^0.0.1-security",
     "glob": "^11.0.1",
+    "jscpd": "^4.0.5",
     "madge": "^8.0.0",
     "path": "^0.12.7"
   }
