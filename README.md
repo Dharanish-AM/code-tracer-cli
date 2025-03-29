@@ -25,7 +25,7 @@ Install Code Tracerr CLI globally using npm:
 Or use it locally in your project:
 
 ```bash
-  npm install --save-dev code-tracer-cli
+  npm install -g code-tracer-cli
 ```
 
 
@@ -35,7 +35,7 @@ Or use it locally in your project:
 Analyze your project with a single command:
 
 ```bash
-code-tracer analyze ./src
+code-tracer ./src
 ```
 
 
