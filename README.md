@@ -35,7 +35,7 @@ Or use it locally in your project:
 Analyze your project with a single command:
 
 ```bash
-code-tracer ./src
+code-tracer 
 ```
 
 
