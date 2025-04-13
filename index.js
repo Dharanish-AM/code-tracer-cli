@@ -262,9 +262,9 @@ async function displayOverview() {
       largeFunctions.forEach(({ name, size, file }) =>
         console.log(
           chalk.redBright.bold(
-            `  ⚠ ${chalk.white.bold(name || "[Anonymous Function]")} (${chalk.yellow.bold(
-              size
-            )} lines) in ${chalk.cyan(file)}`
+            `  ⚠ ${chalk.white.bold(
+              name || "[Anonymous Function]"
+            )} (${chalk.yellow.bold(size)} lines) in ${chalk.cyan(file)}`
           )
         )
       );
