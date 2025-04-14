@@ -1,6 +1,6 @@
 {
   "name": "code-tracer-cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A powerful CLI tool for analyzing code structure, detecting large functions, finding circular dependencies, and optimizing JavaScript/TypeScript projects.",
   "main": "index.js",
   "scripts": {
